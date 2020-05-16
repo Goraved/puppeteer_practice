@@ -1,5 +1,5 @@
 # Puppeteer practice
-Just a Puppeteer tool practice
+Just a [Puppeteer](https://github.com/puppeteer/puppeteer) tool practice
 
 ## How to run
 1. Install all dependencies:
