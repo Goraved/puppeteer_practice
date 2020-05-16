@@ -4,34 +4,71 @@ let browser
 let page
 
 before(async () => {
-  browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox']  })
-  page = await browser.newPage()
+    browser = await puppeteer.launch({
+        headless: false,
+        args: ['--no-sandbox']
+    })
+    page = await browser.newPage()
 })
 
-describe('Shop', () => {
-  it('Order T-Shirt', async () => {
-    await page.goto('http://automationpractice.com/index.php', { waitUntil: 'networkidle0' })
+const screenshot = allure.createStep("saveScreenshot", async name => {
+    const res = await page.screenshot();
+    // Webdriver.io produces values as base64-encoded string. Allure expects either plain text
+    // string or Buffer. So, we are decoding our value, using constructor of built-in Buffer object
+    allure.createAttachment(name, res, "image/png");
+});
+
+const openSite = allure.createStep("Open site", async () => {
+    const pageUrl = 'http://automationpractice.com/index.php';
+    allure.createStep('Open site')
+    await page.goto(pageUrl, {
+        waitUntil: 'networkidle0'
+    });
+    allure.addArgument("pageUrl", pageUrl);
+});
+
+const openTShirtCategory = allure.createStep("Open T-Shirt category", async () => {
     await page.click('li:nth-child(3) > a[title="T-shirts"]');
-    // Another page
-    await page.waitForSelector('[itemprop="name"]', {visible: true});
+});
+
+const addItemToCartAndProceed = allure.createStep("Open item to cart and proceed", async () => {
+    await page.waitForSelector('[itemprop="name"]', {
+        visible: true
+    });
     await page.hover('[itemprop="name"]');
     await page.click('[itemprop="name"]');
     await page.click('[title="Add to cart"]');
-    await page.waitForSelector('[title="Proceed to checkout"]', {visible: true});
+    await page.waitForSelector('[title="Proceed to checkout"]', {
+        visible: true
+    });
     await page.click('[title="Proceed to checkout"]');
-    // Another page
-    await page.waitForSelector('.cart_avail', {visible: true});
+});
+
+const goToSecondCartStep = allure.createStep("Go to the second cart step", async () => {
+    await page.waitForSelector('.cart_avail', {
+        visible: true
+    });
     await page.click('p > a.button.btn.btn-default.standard-checkout.button-medium');
-    // Another page
-    await page.waitForSelector("#email_create", {visible: true});
+});
+
+const register = allure.createStep("Register new account", async () => {
+    await page.waitForSelector("#email_create", {
+        visible: true
+    });
     await page.click("#email_create");
-    await page.waitForSelector("#email_create", {visible: true});
+    await page.waitForSelector("#email_create", {
+        visible: true
+    });
     var rand = Math.random().toString(36).substring(7);
-    await page.waitForSelector("#email_create", {visible: true});
+    await page.waitForSelector("#email_create", {
+        visible: true
+    });
     await page.type("#email_create", `goraved@${rand}.com`);
     await page.click("#SubmitCreate");
     // Another page
-    await page.waitForSelector('[name="id_gender"]', {visible: true});
+    await page.waitForSelector('[name="id_gender"]', {
+        visible: true
+    });
     await page.click('[name="id_gender"]');
     await page.click('[name="customer_firstname"]');
     await page.type('[name="customer_firstname"]', "Test");
@@ -59,7 +96,9 @@ describe('Shop', () => {
     await page.click("#alias");
     await page.click("#alias");
     await page.click("#submitAccount");
-    // Another page
+});
+
+const finishOrder = allure.createStep("Finish order after registration", async () => {
     await page.waitForSelector('#center_column > form > p > button');
     await page.click('#center_column > form > p > button');
     // Another page
@@ -72,18 +111,44 @@ describe('Shop', () => {
     // Another page
     await page.waitForSelector("#cart_navigation > button");
     await page.click("#cart_navigation > button");
-    // Another page
-    await page.waitForSelector('[title="View my customer account"]', {visible: true});
+});
+
+const openProfileOrders = allure.createStep("Open profile orders page", async () => {
+    await page.waitForSelector('[title="View my customer account"]', {
+        visible: true
+    });
     await page.click('[title="View my customer account"]');
     // Another page
     await page.waitForSelector('[title="Orders"]');
     await page.click('[title="Orders"]');
-    // Another page
-    await page.waitForSelector('#order-list > tbody > tr', {visible: true});
+});
+
+const checkOrderPresent = allure.createStep("Check at least 1 order presnt", async () => {
+    await page.waitForSelector('#order-list > tbody > tr', {
+        visible: true
+    });
+});
+
+describe('Shop', async () => {
+
+    it('Order T-Shirt', async () => {
+        allure.feature("Shop");
+        await openSite();
+        await openTShirtCategory();
+        await addItemToCartAndProceed();
+        await goToSecondCartStep();
+        await register();
+        await finishOrder();
+        await openProfileOrders();
+        await checkOrderPresent();
     }).timeout(200000)
 
 })
-
+afterEach("take screenshot on failure", function() {
+    if (this.currentTest.state !== "passed") {
+        return screenshot("screenshot on fail");
+    }
+});
 after(async () => {
-  await browser.close()
+    await browser.close()
 })

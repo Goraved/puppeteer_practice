@@ -9,4 +9,4 @@ Just a Puppeteer tool practice
 ## Notes:
 I didn't really enjoy investigating this tool, cause it's kinda pure according to the Selenium and needs to add waiters for each page switching. IDK, maybe I was badly searching, but I didn't find any global `pageLoad`, or `implicitWait`
 
-### [Video](https://drive.google.com/open?id=1FPTbKFG0kq1RRzbYTr2XYi6savttnMnn)
+### [Video](https://drive.google.com/open?id=1xjmVgFPYKvJn2XNcUjhXEc9mtrPmIsti)
