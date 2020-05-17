@@ -1,0 +1,16 @@
+version: '3'
+services:
+  tests:
+    image: pupp
+    command: npm test
+    depends_on:
+      - setup
+    volumes:
+      - ./test:/app/test
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/allure-reportall
+  setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pupp

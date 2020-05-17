@@ -10,3 +10,9 @@ Just a [Puppeteer](https://github.com/puppeteer/puppeteer) tool practice
 I didn't really enjoy investigating this tool, cause it's kinda pure according to the Selenium and needs to add waiters for each page switching. IDK, maybe I was badly searching, but I didn't find any global `pageLoad`, or `implicitWait`
 
 ### [Video](https://drive.google.com/open?id=1xjmVgFPYKvJn2XNcUjhXEc9mtrPmIsti)
+
+
+## Docker
+Execute tests - `docker-compose run tests`
+
+Rebuild container - `docker-compose build --no-cache setup`

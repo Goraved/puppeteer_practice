@@ -1,20 +1,19 @@
 const assert = require('assert')
 const puppeteer = require('puppeteer')
+require('mocha-allure-reporter');
 let browser
 let page
 
 before(async () => {
     browser = await puppeteer.launch({
-        headless: false,
-        args: ['--no-sandbox']
-    })
+    executablePath:'/usr/bin/chromium',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']});
     page = await browser.newPage()
 })
 
 const screenshot = allure.createStep("saveScreenshot", async name => {
     const res = await page.screenshot();
-    // Webdriver.io produces values as base64-encoded string. Allure expects either plain text
-    // string or Buffer. So, we are decoding our value, using constructor of built-in Buffer object
     allure.createAttachment(name, res, "image/png");
 });
 
