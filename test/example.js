@@ -6,7 +6,7 @@ let page
 
 before(async () => {
     browser = await puppeteer.launch({
-    executablePath:'/usr/bin/chromium',
+    executablePath:'/usr/bin/chromium-browser',
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']});
     page = await browser.newPage()
